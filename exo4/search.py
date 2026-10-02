@@ -119,7 +119,38 @@ def breadth_first_search(
     goal: State,
 ) -> list[State]:
     """Return a shortest path using Breadth-First Search."""
-    ...
+    # Frontiere = file FIFO : le premier etat ajoute est le premier retire
+    frontiere = deque([start])
+    # Pour chaque etat decouvert, on retient l'etat d'ou on vient (le depart n'a pas de parent)
+    parents: dict[State, State | None] = {start: None}
+    # Ensemble des etats deja explores (retires de la frontiere)
+    explores: set[State] = set()
+
+    # Tant qu'il reste des etats a explorer
+    while frontiere:
+        # On retire le plus ANCIEN etat de la frontiere (FIFO)
+        etat = frontiere.popleft()
+
+        # Test du but au moment du retrait (consigne du TD)
+        if etat == goal:
+            # On remonte les parents pour obtenir le chemin depart -> but
+            return _reconstruct_path(parents, goal)
+
+        # On marque l'etat comme explore
+        explores.add(etat)
+
+        # Voisins valides, dans l'ordre : haut, droite, bas, gauche
+        for voisin in successors(game_map, etat):
+            # On ignore un voisin deja explore ou deja dans la frontiere
+            if voisin in explores or voisin in parents:
+                continue
+            # On retient d'ou on vient pour reconstruire le chemin plus tard
+            parents[voisin] = etat
+            # On l'ajoute a la FIN de la file
+            frontiere.append(voisin)
+
+    # Frontiere vide sans trouver le but : aucun chemin possible
+    return []
 
 
 def depth_first_search(
@@ -128,4 +159,36 @@ def depth_first_search(
     goal: State,
 ) -> list[State]:
     """Return a path using Depth-First Search."""
-    ...
+    # Frontiere = pile LIFO : le dernier etat ajoute est le premier retire
+    frontiere = [start]
+    # Pour chaque etat decouvert, on retient l'etat d'ou on vient
+    parents: dict[State, State | None] = {start: None}
+    # Ensemble des etats deja explores
+    explores: set[State] = set()
+
+    # Tant qu'il reste des etats a explorer
+    while frontiere:
+        # On retire le plus RECENT etat de la pile (LIFO)
+        etat = frontiere.pop()
+
+        # Test du but au moment du retrait
+        if etat == goal:
+            # On reconstruit le chemin depart -> but
+            return _reconstruct_path(parents, goal)
+
+        # On marque l'etat comme explore
+        explores.add(etat)
+
+        # On parcourt les voisins a l'ENVERS (gauche, bas, droite, haut)
+        # pour que "haut" soit empile en dernier et donc retire en premier
+        for voisin in reversed(successors(game_map, etat)):
+            # On ignore un voisin deja explore ou deja dans la frontiere
+            if voisin in explores or voisin in parents:
+                continue
+            # On retient d'ou on vient
+            parents[voisin] = etat
+            # On l'ajoute en HAUT de la pile
+            frontiere.append(voisin)
+
+    # Pile vide sans trouver le but : aucun chemin possible
+    return []
