@@ -18,7 +18,6 @@ from io import BytesIO
 from pathlib import Path
 from typing import Sequence
 
-import cairosvg
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
@@ -50,13 +49,14 @@ ACTION_DELTAS: dict[str, State] = {
 # File paths
 # ---------------------------------------------------------------------------
 
-SPRITE_DIRECTORY = Path("./pokemon-sprites")
+# Dossier des images, trouve a partir de ce fichier (marche quel que soit le dossier de lancement)
+SPRITE_DIRECTORY = Path(__file__).resolve().parent / "pokemon-sprites"
 
 SPRITE_PATHS = {
-    "tree": SPRITE_DIRECTORY / "tree.svg",
-    "grass": SPRITE_DIRECTORY / "grass.svg",
-    "trainer": SPRITE_DIRECTORY / "trainer.svg",
-    "clinic": SPRITE_DIRECTORY / "clinic.svg",
+    "tree": SPRITE_DIRECTORY / "tree.png",
+    "grass": SPRITE_DIRECTORY / "grass.png",
+    "trainer": SPRITE_DIRECTORY / "trainer.png",
+    "clinic": SPRITE_DIRECTORY / "clinic.png",
 }
 
 
@@ -368,27 +368,21 @@ def path_to_actions(path: Sequence[State]) -> list[str]:
 # ---------------------------------------------------------------------------
 
 
-def _load_svg(
+def _load_png(
     path: Path,
     size: int = 256,
 ) -> np.ndarray:
-    """Load an SVG sprite as an RGBA NumPy array."""
+    """Load a PNG sprite as an RGBA NumPy array (version Windows, sans CairoSVG)."""
     if not path.exists():
         raise FileNotFoundError(f"Sprite file not found: {path}")
 
-    png_data = cairosvg.svg2png(
-        url=str(path),
-        output_width=size,
-        output_height=size,
-    )
-
-    image = Image.open(BytesIO(png_data)).convert("RGBA")
+    image = Image.open(path).convert("RGBA").resize((size, size))
     return np.asarray(image)
 
 
 def load_sprites() -> dict[str, np.ndarray]:
     """Load all sprites required by the game."""
-    return {name: _load_svg(path) for name, path in SPRITE_PATHS.items()}
+    return {name: _load_png(path) for name, path in SPRITE_PATHS.items()}
 
 
 # ---------------------------------------------------------------------------

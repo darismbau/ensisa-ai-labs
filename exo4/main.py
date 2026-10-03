@@ -10,7 +10,7 @@ from pokemon_game import (
     path_to_actions,
     visualize_path,
 )
-from search_sol import generate_random_path, breadth_first_search, depth_first_search
+from search import generate_random_path, breadth_first_search, depth_first_search
 
 # Using a fixed seed gives every student the same example.
 # Replace it with None to generate a different map on each execution.

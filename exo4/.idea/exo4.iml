@@ -4,12 +4,12 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
     </content>
-    <orderEntry type="jdk" jdkName="D:\ENSISA\SEMESTRE 7\Intelligence artificielle\exo4\.venv" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="D:\ENSISA\SEMESTRE 7\Intelligence artificielle\ensisa-ai-labs\exo4\.venv" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PackageRequirementsSettings" />
   <component name="PyDocumentationSettings">
-    <option name="format" value="PLAIN" />
+    <option name="format" value="NUMPY" />
   </component>
   <component name="ReSTService" />
   <component name="TestRunnerService" />
